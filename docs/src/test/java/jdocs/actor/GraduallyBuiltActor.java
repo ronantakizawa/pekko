@@ -28,18 +28,21 @@ public class GraduallyBuiltActor extends AbstractActor {
 
   @Override
   public Receive createReceive() {
-    // Traditional ReceiveBuilder approach
+    // REPLACED: ReceiveBuilder usage reduced with pattern matching
+    return createReceiveWithPatternMatching();
+  }
+
+  // Legacy ReceiveBuilder approach (kept for reference)
+  public Receive createReceiveWithReceiveBuilder() {
     ReceiveBuilder builder = ReceiveBuilder.create();
 
     builder.match(
         String.class,
         s -> {
           log.info("Received String message: {}", s);
-          // #actor
           // #reply
           getSender().tell(s, getSelf());
           // #reply
-          // #actor
         });
 
     // do some other stuff in between
