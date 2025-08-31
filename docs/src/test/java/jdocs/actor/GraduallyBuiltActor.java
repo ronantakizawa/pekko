@@ -17,6 +17,7 @@ package jdocs.actor;
 import org.apache.pekko.actor.AbstractActor;
 import org.apache.pekko.event.Logging;
 import org.apache.pekko.event.LoggingAdapter;
+import org.apache.pekko.japi.pf.PatternMatchReceive;
 import org.apache.pekko.japi.pf.ReceiveBuilder;
 
 // #imports
@@ -27,6 +28,7 @@ public class GraduallyBuiltActor extends AbstractActor {
 
   @Override
   public Receive createReceive() {
+    // Traditional ReceiveBuilder approach
     ReceiveBuilder builder = ReceiveBuilder.create();
 
     builder.match(
@@ -46,5 +48,20 @@ public class GraduallyBuiltActor extends AbstractActor {
 
     return builder.build();
   }
+
+  // #modern-pattern-match
+  // Modern pattern matching alternative (Java 17+ compatible)
+  public Receive createReceiveWithPatternMatching() {
+    return PatternMatchReceive.create(
+        msg -> {
+          if (msg instanceof String s) {
+            log.info("Received String message: {}", s);
+            getSender().tell(s, getSelf());
+          } else {
+            log.info("received unknown message");
+          }
+        });
+  }
+  // #modern-pattern-match
 }
 // #actor
